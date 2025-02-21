@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:conductor/static/firebase_options.dart';
-// import 'package:conductor/views/owner/owner_home_page.dart';
 import 'static/firebase_options.dart';
 import 'views/driver/driver_home_page.dart';
 import 'authentication/login_page.dart';

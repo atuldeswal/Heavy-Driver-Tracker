@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:conductor/views/owner/driver_details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:conductor/authentication/add_driver_page.dart';
-// import 'package:conductor/authentication/login_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:newproject/authentication/add_driver_page.dart';
 import 'package:newproject/authentication/login_page.dart';
@@ -27,34 +24,8 @@ class _OwnerHomePageState extends State<OwnerHomePage> {
   @override
 void initState() {
   super.initState();
-  fetchDriverStats(); // Call fetchDriverStats when the widget initializes
+  fetchDriverStats();
 }
-
-
-  // Future<Map<String, String>> getOwnerDetails() async {
-  //   var user = FirebaseAuth.instance.currentUser;
-  //   if (user == null) return {};
-
-  //   try {
-  //     var doc = await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .doc(user.uid)
-  //         .get();
-
-  //     if (!doc.exists) {
-  //       debugPrint("Owner document does not exist for user: ${user.uid}");
-  //       return {};
-  //     }
-
-  //     return {
-  //       'ownerId': doc.id,
-  //       'companyName': doc.data()?['companyName'] ?? 'Unknown Company',
-  //     };
-  //   } catch (e) {
-  //     debugPrint("Error fetching owner details: $e");
-  //     return {};
-  //   }
-  // }
 
   Future<void> fetchDriverStats() async {
   var user = FirebaseAuth.instance.currentUser;

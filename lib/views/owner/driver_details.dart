@@ -1,5 +1,3 @@
-// import 'package:conductor/views/driver/journey_map_screen.dart';
-// import 'package:conductor/views/owner/start_journey_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:newproject/views/driver/journey_map_screen.dart';
 import 'package:newproject/views/owner/start_journey_screen.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DriverDetails extends StatefulWidget {
   final String driverID;
@@ -94,6 +93,7 @@ class _DriverDetailsState extends State<DriverDetails> {
     } else if (driverData?['currentJourneyId'] != null &&
         driverData?['acceptedJourney'] == false) {
       await _deletePendingJourneys(widget.driverID);
+      sendNotificationToDriver(widget.driverID, "A journey was cancelled by owner.");
       Navigator.pop(context);
     } else {
       try {
@@ -202,6 +202,19 @@ class _DriverDetailsState extends State<DriverDetails> {
         ),
       );
     }
+  }
+
+  void sendNotificationToDriver(String driverID, String message) {
+    FirebaseFirestore.instance.collection('notifications').add({
+      'userId': driverID,
+      'message': message,
+      'timestamp': FieldValue.serverTimestamp(),
+      'read': false,
+    }).then((value) {
+      print('Notification Sent Successfully');
+    }).catchError((error) {
+      print('Failed to send Notification: $error');
+    });
   }
 
   @override

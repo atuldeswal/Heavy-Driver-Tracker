@@ -1,4 +1,3 @@
-// import 'package:conductor/authentication/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:newproject/authentication/login_page.dart';
 import 'journey_map_screen.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:badges/badges.dart' as badges;
+import 'package:newproject/notification_history_page.dart';
 
 class DriverHomePage extends StatefulWidget {
   const DriverHomePage({super.key});
@@ -23,6 +24,7 @@ class _DriverHomePageState extends State<DriverHomePage> {
   bool hasJourney = false;
   bool canAcceptJourney = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   void initState() {
@@ -265,12 +267,65 @@ class _DriverHomePageState extends State<DriverHomePage> {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications,
-                  color: Colors.white,
-                ),
-                onPressed: () {},
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('notifications')
+                    .where('userId', isEqualTo: currentUserUid)
+                    .where('read', isEqualTo: false)
+                    .orderBy('timestamp', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return IconButton(
+                      icon: const Icon(
+                        Icons.notifications,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => NotificationHistoryPage()),
+                        );
+                      },
+                    );
+                  }
+
+                  var notifications = snapshot.data!.docs;
+                  int unreadCount = notifications.length;
+
+                  for (var change in snapshot.data!.docChanges) {
+                    if (change.type == DocumentChangeType.added) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text('New: ${change.doc['message']}')),
+                        );
+                      });
+                    }
+                  }
+
+                  return badges.Badge(
+                    badgeContent: Text(
+                      unreadCount.toString(),
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    showBadge: unreadCount > 0,
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.notifications,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (builder) => NotificationHistoryPage()),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),
