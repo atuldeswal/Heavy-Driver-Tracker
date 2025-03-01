@@ -98,3 +98,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Contact
 - GitHub: [@atuldeswal](https://github.com/atuldeswal)
+- For any questions or suggestions, please reach out to [hunnydeswal2@gmail.com](mailto:hunnydeswal2@gmail.com)
